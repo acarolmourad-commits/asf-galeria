@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASF Galeria — Mural de fotos do surf feminino</title>
+<meta name="description" content="Mural colaborativo de fotos e momentos do surf feminino. Satélite do app ASF.">
+<link rel="canonical" href="https://acarolmourad-commits.github.io/asf-galeria/">
+<style>body{font-family:system-ui,sans-serif;margin:0;background:#fdf2f8;color:#500724}header{background:#db2777;color:#fff;padding:2rem;text-align:center}nav{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;padding:1rem;background:#fce7f3}nav a{color:#be185d;text-decoration:none;font-size:.85rem}main{max-width:900px;margin:2rem auto;padding:0 1rem}.card{background:#fff;border-radius:16px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,.08)}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}.ph{background:#fbcfe8;border-radius:12px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:2rem;position:relative}.ph small{position:absolute;bottom:8px;font-size:.75rem;background:#fff;border-radius:8px;padding:2px 8px}button{background:#db2777;color:#fff;border:0;border-radius:9999px;padding:.7rem 1.4rem;font-weight:700;cursor:pointer}footer{text-align:center;padding:2rem;color:#9d174d}</style>
+</head>
+<body>
+<header><h1>ASF Galeria 📸</h1><p>O mural de momentos do surf feminino</p></header>
+<nav id="net"></nav>
+<main>
+<div class="card"><h2>✨ Adicionar momento</h2>
+<input id="emoji" placeholder="Emoji da vibe (ex: 🌊🏄‍♀️🌅)" style="width:100%;padding:.6rem;border:1px solid #f9a8d4;border-radius:8px;margin:.3rem 0">
+<input id="leg" placeholder="Legenda (ex: Drop perfeito em Maresias!)" style="width:100%;padding:.6rem;border:1px solid #f9a8d4;border-radius:8px;margin:.3rem 0">
+<button onclick="add()">Publicar no mural</button>
+<p style="font-size:12px;color:#9d174d">O mural fica salvo no seu navegador. Compartilhe fotos de verdade no Instagram <a href="https://instagram.com/asf.surffeminino">@asf.surffeminino</a>!</p></div>
+<div class="card"><h2>🖼️ Mural</h2><div class="grid" id="wall"></div></div>
+</main>
+<footer>ASF Galeria — satélite do <a href="https://acarolmourad-commits.github.io/asf-app/">app ASF</a> · veja também <a href="https://acarolmourad-commits.github.io/asf-comunidade/">Comunidade</a> e <a href="https://acarolmourad-commits.github.io/asf-goldenhour/">Golden Hour</a></footer>
+<script>
+const sites=[["asf-app","App ASF"],["asf-praias","Praias"],["asf-previsao","Previsão"],["asf-treino","Treino"],["asf-eventos","Eventos"],["asf-glossario","Glossário"],["asf-comunidade","Comunidade"],["asf-seguranca","Segurança"],["asf-equipamento","Equipamento"],["asf-quiz","Quiz"],["asf-nutricao","Nutrição"],["asf-viagens","Viagens"],["asf-bemestar","Bem-Estar"],["asf-diario","Diário"],["asf-apnea","Apneia"],["asf-carona","Carona"],["asf-mapa","Mapa"],["asf-mare","Maré"],["asf-ranking","Ranking"],["asf-goldenhour","Golden Hour"]];
+document.getElementById('net').innerHTML=sites.map(s=>`<a href="https://acarolmourad-commits.github.io/${s[0]}/">${s[1]}</a>`).join('');
+const seed=[{e:'🌅',l:'Dawn patrol em Juquehy'},{e:'🏄‍♀️',l:'Primeira onda da Marina!'},{e:'🐬',l:'Golfinhos no line-up'},{e:'🌊',l:'Swell de sul chegando'}];
+function load(){return JSON.parse(localStorage.getItem('asf-galeria')||'null')||seed;}
+function render(){document.getElementById('wall').innerHTML=load().map(x=>`<div class="ph">${x.e}<small>${x.l}</small></div>`).join('');}
+function add(){const e=document.getElementById('emoji').value.trim()||'🌊',l=document.getElementById('leg').value.trim();if(!l)return alert('Escreva uma legenda!');const w=load();w.unshift({e,l});localStorage.setItem('asf-galeria',JSON.stringify(w.slice(0,60)));render();}
+render();
+</script>
+</body>
+</html>
