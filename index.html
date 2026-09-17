@@ -3,56 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASF Galeria — Fotos e momentos do surf feminino | ASF</title>
-<meta name="description" content="Galeria da comunidade ASF: os melhores momentos das surfistas do litoral norte de SP, com filtros por praia.">
-<link rel="canonical" href="https://acarolmourad-commits.github.io/asf-galeria/">
-<meta name="theme-color" content="#00A8CC">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"ASF Galeria","url":"https://acarolmourad-commits.github.io/asf-galeria/","applicationCategory":"MultimediaApplication","operatingSystem":"Web","inLanguage":"pt-BR","isPartOf":{"@type":"WebSite","name":"ASF — Associação Surf Feminino","url":"https://acarolmourad-commits.github.io/asf-app/"}}
-</script>
+<title>ASF Galeria — ASF</title>
+<meta name="description" content="Mural colaborativo de fotos de surf feminino">
 <style>
-:root{--primary:#00A8CC;--dark:#0E2439;--purple:#9B59B6;--bg:#F7FBFC;--gray:#5A6B7A}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--dark)}
-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E5EEF2;padding:10px 16px;display:flex;gap:14px;flex-wrap:wrap;z-index:10;justify-content:center}
-nav a{color:var(--primary);text-decoration:none;font-weight:700;font-size:13px}
-nav a.on{color:var(--purple)}
-header{background:linear-gradient(135deg,var(--purple),var(--primary));color:#fff;padding:44px 20px 32px;text-align:center}
-header h1{font-size:clamp(22px,5vw,32px);margin:6px 0}
-header .tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.9}
-.wrap{max-width:860px;margin:0 auto;padding:24px 16px 60px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.foto{border-radius:14px;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:12px;color:#fff;font-weight:700;font-size:13px;box-shadow:0 2px 10px rgba(14,36,57,.1)}
-.muted{color:var(--gray);font-size:12.5px}
-footer{text-align:center;font-size:12.5px;color:var(--gray);padding:24px;border-top:1px solid #E5EEF2}
+:root{--rosa:#ff4d8d;--roxo:#7b2ff7;--areia:#fff5ec;--mar:#00c2cb}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:linear-gradient(160deg,#fff5ec,#ffe3f1 60%,#e0f7fa);min-height:100vh;color:#333}
+header{background:linear-gradient(90deg,var(--rosa),var(--roxo));color:#fff;padding:2rem 1rem;text-align:center}
+header h1{font-size:2rem} header p{opacity:.9;margin-top:.4rem}
+nav{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center;padding:.7rem;background:#fff;box-shadow:0 2px 8px #0001;position:sticky;top:0;z-index:10;max-height:38vh;overflow:auto}
+nav a{background:var(--areia);border:1px solid #ffd3e6;color:#c2185b;padding:.25rem .6rem;border-radius:20px;font-size:.72rem;text-decoration:none}
+nav a:hover{background:var(--rosa);color:#fff}
+main{max-width:760px;margin:1.5rem auto;padding:0 1rem}
+.card{background:#fff;border-radius:16px;padding:1.4rem;box-shadow:0 4px 16px #7b2ff720;margin-bottom:1.2rem}
+.card h2{color:var(--roxo);margin-bottom:.6rem;font-size:1.2rem}
+button{background:linear-gradient(90deg,var(--rosa),var(--roxo));color:#fff;border:none;padding:.6rem 1.2rem;border-radius:24px;font-size:1rem;cursor:pointer}
+button:hover{opacity:.85}
+input,select,textarea{padding:.5rem;border:1px solid #ddd;border-radius:10px;width:100%;margin:.3rem 0;font-size:1rem}
+.xp{position:fixed;bottom:1rem;right:1rem;background:#fff;border:2px solid var(--rosa);border-radius:24px;padding:.4rem 1rem;font-weight:bold;color:var(--roxo);box-shadow:0 4px 12px #0002;z-index:20}
+footer{text-align:center;padding:2rem;font-size:.8rem;color:#888}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem}.gal img{width:100%;border-radius:12px;aspect-ratio:1;object-fit:cover}.gal figcaption{font-size:.75rem;color:#666;margin-top:.2rem}
 </style>
 </head>
 <body>
-<nav>
-<a href="https://acarolmourad-commits.github.io/asf-app/">🏄 ASF App</a>
-<a href="https://acarolmourad-commits.github.io/asf-comunidade/">🤝 Comunidade</a>
-<a href="https://acarolmourad-commits.github.io/asf-eventos/">📅 Eventos</a>
-<a class="on" href="https://acarolmourad-commits.github.io/asf-galeria/">📸 Galeria</a>
-<a href="https://acarolmourad-commits.github.io/asf-goldenhour/">🌅 Golden Hour</a>
-<a href="https://acarolmourad-commits.github.io/asf-mapa/">🗺️ Mapa</a>
-</nav>
-<header>
-<div class="tag">ASF · Galeria</div>
-<h1>Momentos do surf feminino</h1>
-<p>Os melhores registros da comunidade — cada foto conta uma história.</p>
-</header>
-<main class="wrap">
-<div class="grid">
-<div class="foto" style="background:linear-gradient(160deg,#00A8CC,#0E2439)">Maresias · primeira onda da Lu 🌊</div>
-<div class="foto" style="background:linear-gradient(160deg,#9B59B6,#0E2439)">Itamambuca · final do circuito 🏆</div>
-<div class="foto" style="background:linear-gradient(160deg,#FF7B54,#0E2439)">Baleia · encontro das manas 🤝</div>
-<div class="foto" style="background:linear-gradient(160deg,#0B8A5F,#0E2439)">Ubatuba · aula das kids 🧒</div>
-<div class="foto" style="background:linear-gradient(160deg,#E63970,#0E2439)">Juquehy · golden hour 🌅</div>
-<div class="foto" style="background:linear-gradient(160deg,#5A6B7A,#0E2439)">Camburi · longboard clássico 🏄</div>
-</div>
-<p class="muted" style="margin-top:16px">Quer sua foto aqui? Compartilhe com a <a href="https://acarolmourad-commits.github.io/asf-comunidade/" style="color:var(--primary)">Comunidade ASF</a>. Dica: os melhores horários de luz estão no <a href="https://acarolmourad-commits.github.io/asf-goldenhour/" style="color:var(--primary)">ASF Golden Hour</a>.</p>
+<header><h1>📸 ASF Galeria</h1><p>Mural colaborativo de fotos de surf feminino</p></header>
+<nav><a href="https://acarolmourad-commits.github.io/asf-app/">🏄‍♀️ ASF App</a>
+<a href="https://acarolmourad-commits.github.io/asf-praias/">Praias</a>
+<a href="https://acarolmourad-commits.github.io/asf-previsao/">Previsão</a>
+<a href="https://acarolmourad-commits.github.io/asf-treino/">Treino</a>
+<a href="https://acarolmourad-commits.github.io/asf-eventos/">Eventos</a>
+<a href="https://acarolmourad-commits.github.io/asf-glossario/">Glossário</a>
+<a href="https://acarolmourad-commits.github.io/asf-seguranca/">Segurança</a>
+<a href="https://acarolmourad-commits.github.io/asf-comunidade/">Comunidade</a>
+<a href="https://acarolmourad-commits.github.io/asf-equipamento/">Equipamento</a>
+<a href="https://acarolmourad-commits.github.io/asf-quiz/">Quiz</a>
+<a href="https://acarolmourad-commits.github.io/asf-nutricao/">Nutrição</a>
+<a href="https://acarolmourad-commits.github.io/asf-historia/">História</a>
+<a href="https://acarolmourad-commits.github.io/asf-viagens/">Viagens</a>
+<a href="https://acarolmourad-commits.github.io/asf-bemestar/">Bem-estar</a>
+<a href="https://acarolmourad-commits.github.io/asf-diario/">Diário</a>
+<a href="https://acarolmourad-commits.github.io/asf-eco/">Eco</a>
+<a href="https://acarolmourad-commits.github.io/asf-kids/">Kids</a>
+<a href="https://acarolmourad-commits.github.io/asf-mental/">Mental</a>
+<a href="https://acarolmourad-commits.github.io/asf-ranking/">Ranking</a>
+<a href="https://acarolmourad-commits.github.io/asf-respira/">Respira</a>
+<a href="https://acarolmourad-commits.github.io/asf-sos/">Sos</a>
+<a href="https://acarolmourad-commits.github.io/asf-volume/">Volume</a>
+<a href="https://acarolmourad-commits.github.io/asf-yoga/">Yoga</a>
+<a href="https://acarolmourad-commits.github.io/asf-alerta/">Alerta</a>
+<a href="https://acarolmourad-commits.github.io/asf-apnea/">Apneia</a>
+<a href="https://acarolmourad-commits.github.io/asf-carona/">Carona</a>
+<a href="https://acarolmourad-commits.github.io/asf-clube/">Clube</a>
+<a href="https://acarolmourad-commits.github.io/asf-desafio/">Desafio30</a>
+<a href="https://acarolmourad-commits.github.io/asf-goldenhour/">GoldenHour</a>
+<a href="https://acarolmourad-commits.github.io/asf-leitura/">LeituraMar</a>
+<a href="https://acarolmourad-commits.github.io/asf-manobras/">Manobras</a>
+<a href="https://acarolmourad-commits.github.io/asf-mapa/">Mapa</a>
+<a href="https://acarolmourad-commits.github.io/asf-mare/">Maré</a>
+<a href="https://acarolmourad-commits.github.io/asf-mentorias/">Mentorias</a>
+<a href="https://acarolmourad-commits.github.io/asf-mercado/">Mercado</a>
+<a href="https://acarolmourad-commits.github.io/asf-parceiras/">Parceiras</a>
+<a href="https://acarolmourad-commits.github.io/asf-ponto/">Ponto</a>
+<a href="https://acarolmourad-commits.github.io/asf-popup/">Pop-up</a>
+<a href="https://acarolmourad-commits.github.io/asf-sonhos/">Sonhos</a></nav>
+<main>
+<div class="card"><h2>📷 Adicionar foto ao mural</h2>
+<input id="url" type="url" placeholder="Cole a URL da foto (https://...)">
+<input id="leg" placeholder="Legenda — praia, quem, momento">
+<button onclick="add()">Publicar (+10 XP)</button></div>
+<div class="card"><h2>🌊 Mural ASF</h2><div id="gal" class="gal"></div></div>
+<div class="card"><p>Melhor horário pra fotos? Veja o <a href='https://acarolmourad-commits.github.io/asf-goldenhour/'>ASF Golden Hour</a>!</p></div>
+<div class="card"><h2>🌐 Ecossistema ASF</h2><p>Este app faz parte da constelação ASF — Associação de Surf Feminino. Ganhe XP aqui e veja seu progresso no <a href="https://acarolmourad-commits.github.io/asf-ranking/">ASF Ranking</a>. App principal: <a href="https://acarolmourad-commits.github.io/asf-app/">ASF App</a>.</p></div>
 </main>
-<footer>🌊 ASF — Associação Surf Feminino · <a href="https://acarolmourad-commits.github.io/" style="color:var(--primary)">Hub de apps</a> · <a href="https://acarolmourad-commits.github.io/asf-app/" style="color:var(--primary)">App principal</a></footer>
+<div class="xp">⭐ XP: <span id="xp">0</span></div>
+<footer>ASF — Associação de Surf Feminino · Feito com 🌊 e 💜 · <a href="https://acarolmourad-commits.github.io/">hub</a> · <a href="https://acarolmourad-commits.github.io/asf-app/">asf-app</a></footer>
+<script>
+const XP=()=>parseInt(localStorage.getItem('asf_xp')||'0');
+function addXP(n){localStorage.setItem('asf_xp',XP()+n);document.getElementById('xp').textContent=XP();}
+document.getElementById('xp').textContent=XP();
+const seed=[{url:'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400',leg:'Drop perfeito 🌊'},{url:'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400',leg:'Sessão de fim de tarde'}];function render(){const l=JSON.parse(localStorage.getItem('asf_gal')||'null')||seed;document.getElementById('gal').innerHTML=l.map(f=>`<figure><img src="${f.url}" loading="lazy" onerror="this.parentNode.remove()"><figcaption>${f.leg}</figcaption></figure>`).join('');}function add(){const u=document.getElementById('url').value,g=document.getElementById('leg').value;if(!u)return;const l=JSON.parse(localStorage.getItem('asf_gal')||'null')||seed;l.unshift({url:u,leg:g||'ASF 💜'});localStorage.setItem('asf_gal',JSON.stringify(l));render();addXP(10);}render();
+</script>
 </body>
 </html>
