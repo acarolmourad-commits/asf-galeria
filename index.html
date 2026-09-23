@@ -28,6 +28,12 @@ footer{text-align:center;padding:2rem;font-size:.8rem;color:#888}
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication","name":"ASF Galeria","url":"https://acarolmourad-commits.github.io/asf-galeria/","applicationCategory":"SportsApplication","operatingSystem":"Web","inLanguage":"pt-BR","isPartOf":{"@type":"WebSite","name":"ASF — Associação Surf Feminino","url":"https://acarolmourad-commits.github.io/asf-app/"}}
 </script>
+<meta property="og:type" content="website">
+<meta property="og:title" content="ASF Galeria — ASF">
+<meta property="og:description" content="Mural colaborativo de fotos de surf feminino">
+<meta property="og:url" content="https://acarolmourad-commits.github.io/asf-galeria/">
+<meta property="og:image" content="https://acarolmourad-commits.github.io/asf-app/assets/images/asf-logo.png">
+<meta name="twitter:card" content="summary">
 </head>
 <body>
 <header><h1>📸 ASF Galeria</h1><p>Mural colaborativo de fotos de surf feminino</p></header>
@@ -87,6 +93,5 @@ function addXP(n){localStorage.setItem('asf_xp',XP()+n);document.getElementById(
 document.getElementById('xp').textContent=XP();
 const seed=[{url:'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400',leg:'Drop perfeito 🌊'},{url:'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400',leg:'Sessão de fim de tarde'}];function render(){const l=JSON.parse(localStorage.getItem('asf_gal')||'null')||seed;document.getElementById('gal').innerHTML=l.map(f=>`<figure><img src="${f.url}" alt="Foto de surf enviada pela comunidade ASF" loading="lazy" onerror="this.parentNode.remove()"><figcaption>${f.leg}</figcaption></figure>`).join('');}function add(){const u=document.getElementById('url').value,g=document.getElementById('leg').value;if(!u)return;const l=JSON.parse(localStorage.getItem('asf_gal')||'null')||seed;l.unshift({url:u,leg:g||'ASF 💜'});localStorage.setItem('asf_gal',JSON.stringify(l));render();addXP(10);}render();
 </script>
-<footer style="text-align:center;padding:18px 12px;font-size:12px;color:#567;background:transparent">ASF — Associação de Surf Feminino · <a href="https://acarolmourad-commits.github.io/asf-app/privacidade.html" style="color:#00A8CC">Privacidade</a> · <a href="https://acarolmourad-commits.github.io/asf-app/cookies.html" style="color:#00A8CC">Cookies</a> · <a href="https://acarolmourad-commits.github.io/asf-app/termos-de-uso.html" style="color:#00A8CC">Termos</a></footer>
 </body>
 </html>
