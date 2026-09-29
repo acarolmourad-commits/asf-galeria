@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASF Galeria — Mural das Manas 🌊</title>
+<meta name="description" content="Mural colaborativo de fotos de surf feminino. Compartilhe seus momentos no pico, comente e espalhe o stoke!">
+<style>
+:root{--bg:#0a1622;--card:#122637;--wave:#19b3a6;--coral:#ff6b6b;--sand:#f4e3c1;--txt:#eef6f6;--muted:#8fb3bd}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:linear-gradient(180deg,#0a1622 0%,#0e2a3a 100%);color:var(--txt);min-height:100vh}
+header{padding:28px 20px 16px;text-align:center;background:linear-gradient(135deg,rgba(25,179,166,.15),rgba(255,107,107,.1))}
+h1{font-size:2rem;letter-spacing:.5px}
+h1 span{color:var(--wave)}
+.sub{color:var(--muted);margin-top:6px;font-size:.95rem}
+.btn{background:var(--coral);color:#fff;border:none;padding:12px 26px;border-radius:30px;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;box-shadow:0 4px 14px rgba(255,107,107,.35)}
+.btn:hover{transform:translateY(-2px)}
+.btn2{background:var(--wave);box-shadow:0 4px 14px rgba(25,179,166,.35)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:14px 16px}
+.chip{background:var(--card);border:1px solid #234552;color:var(--muted);padding:7px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;transition:.2s}
+.chip.active,.chip:hover{background:var(--wave);color:#04252b;border-color:var(--wave);font-weight:600}
+.mural{columns:3;column-gap:16px;max-width:1100px;margin:0 auto;padding:10px 18px 60px}
+@media(max-width:800px){.mural{columns:2}}
+@media(max-width:480px){.mural{columns:1}}
+.post{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:16px;break-inside:avoid;border:1px solid #1d3c50}
+.post img{width:100%;display:block}
+.pbody{padding:12px 14px}
+.pico{font-size:.72rem;color:var(--wave);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.cap{margin:6px 0 10px;font-size:.92rem;line-height:1.4}
+.meta{font-size:.75rem;color:var(--muted);margin-bottom:10px}
+.actions{display:flex;gap:10px;align-items:center;border-top:1px solid #1d3c50;padding-top:10px}
+.stoke{background:none;border:1px solid #234552;color:var(--coral);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:.9rem;transition:.2s}
+.stoke:hover{background:rgba(255,107,107,.12)}
+.cbox{margin-top:10px}
+.comment{font-size:.82rem;background:#0d1e2c;padding:7px 10px;border-radius:10px;margin-top:6px}
+.comment b{color:var(--wave)}
+.cform{display:flex;gap:6px;margin-top:8px}
+.cform input{flex:1;background:#0d1e2c;border:1px solid #234552;color:var(--txt);padding:8px 10px;border-radius:10px;font-size:.85rem}
+.cform button{background:var(--wave);border:none;color:#04252b;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(4,12,18,.85);display:none;align-items:center;justify-content:center;z-index:50;padding:18px}
+.modal.open{display:flex}
+.mcard{background:var(--card);border-radius:18px;padding:24px;max-width:440px;width:100%;border:1px solid #234552}
+.mcard h2{margin-bottom:14px;font-size:1.2rem}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px}
+.field input,.field textarea,.field select{width:100%;background:#0d1e2c;border:1px solid #234552;color:var(--txt);padding:10px;border-radius:10px;font-size:.9rem}
+.drop{border:2px dashed #2c5873;border-radius:14px;padding:26px;text-align:center;color:var(--muted);cursor:pointer;transition:.2s}
+.drop:hover{border-color:var(--wave);color:var(--wave)}
+#preview{max-width:100%;border-radius:12px;margin-top:10px;display:none}
+.empty{text-align:center;color:var(--muted);padding:50px 20px;grid-column:1/-1}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:20px;border-top:1px solid #16303f}
+.topo{position:fixed;bottom:20px;right:20px;z-index:40}
+</style>
+</head>
+<body>
+<header>
+<h1>🌊 ASF <span>Galeria</span> — Mural das Manas</h1>
+<p class="sub">Surfou? Fez o bate-volta? Compartilhe seu momento no pico! 📸🤙</p>
+<div style="margin-top:16px"><button class="btn" onclick="openModal()">📸 Postar meu momento</button></div>
+</header>
+<div class="filters" id="filters"></div>
+<main class="mural" id="mural"></main>
+<footer>Feito com 💙 pela comunidade ASF · <a href="https://asf.surf" style="color:var(--wave)">asf.surf</a></footer>
+
+<div class="modal" id="modal">
+<div class="mcard">
+<h2>📸 Postar no mural</h2>
+<div class="field"><label>Sua foto *</label><div class="drop" onclick="document.getElementById('foto').click()">Toque para escolher a foto 🏄‍♀️<input type="file" id="foto" accept="image/*" style="display:none" onchange="loadFoto(event)"></div><img id="preview"></div>
+<div class="field"><label>Seu nome / apelido *</label><input id="nome" maxlength="40" placeholder="Ex.: Mari do Arpoador"></div>
+<div class="field"><label>Pico / praia</label><input id="pico" maxlength="40" placeholder="Ex.: Maresias, Itamambuca..."></div>
+<div class="field"><label>Legenda</label><textarea id="legenda" rows="2" maxlength="200" placeholder="Como foi a sessão?"></textarea></div>
+<div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn2" onclick="closeModal()" style="background:#234552;box-shadow:none">Cancelar</button><button class="btn" onclick="postar()">Publicar 🤙</button></div>
+</div>
+</div>
+
+<script>
+const LS='asf_mural_v1';
+let posts=JSON.parse(localStorage.getItem(LS)||'null')||seed();
+let filtroAtual='Todos';
+function seed(){return[
+{id:1,nome:'Manas da ASF',pico:'Maresias',cap:'Bem-vindas ao mural! Poste sua foto e espalhe o stoke 🌊🤙',img:svg('🌊','#19b3a6'),stoke:12,comments:[{n:'ASF',t:'Esse mural é de vocês, manas! 💙'}],ts:Date.now()},
+{id:2,nome:'Convite ASF',pico:'Todos os picos',cap:'Bate-volta, session, drop insano... tudo vale! Clique em "Postar meu momento" 📸',img:svg('🏄‍♀️','#ff6b6b'),stoke:8,comments:[],ts:Date.now()-86400000}
+];}
+function svg(e,c){const s='<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="600" height="400" fill="'+c+'"/><text x="300" y="230" font-size="120" text-anchor="middle">'+e+'</text></svg>';return 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(s)));}
+function save(){try{localStorage.setItem(LS,JSON.stringify(posts));}catch(e){alert('Foto muito grande para o modo demo. Na versão conectada (Supabase) não haverá esse limite!');}}
+function picos(){const s=new Set(posts.map(p=>p.pico||'Sem pico'));return ['Todos',...s];}
+function renderFilters(){document.getElementById('filters').innerHTML=picos().map(p=>'<div class="chip'+(p===filtroAtual?' active':'')+'" onclick="filtrar(\''+p.replace(/'/g,"\\'")+'\')">'+p+'</div>').join('');}
+function filtrar(p){filtroAtual=p;render();}
+function render(){
+renderFilters();
+const list=posts.filter(p=>filtroAtual==='Todos'||(p.pico||'Sem pico')===filtroAtual).sort((a,b)=>b.ts-a.ts);
+const m=document.getElementById('mural');
+if(!list.length){m.innerHTML='<div class="empty">Nenhuma foto por aqui ainda... seja a primeira! 🌊</div>';return;}
+m.innerHTML=list.map(p=>
+'<div class="post"><img src="'+p.img+'" loading="lazy"><div class="pbody">'
++'<div class="pico">📍 '+(p.pico||'Pico secreto')+'</div>'
++'<div class="cap">'+esc(p.cap)+'</div>'
++'<div class="meta">por <b style="color:var(--sand)">'+esc(p.nome)+'</b> · '+new Date(p.ts).toLocaleDateString('pt-BR')+'</div>'
++'<div class="actions"><button class="stoke" onclick="stoke('+p.id+')">🤙 '+p.stoke+'</button><span style="font-size:.8rem;color:var(--muted)">💬 '+p.comments.length+'</span></div>'
++'<div class="cbox">'+p.comments.map(c=>'<div class="comment"><b>'+esc(c.n)+':</b> '+esc(c.t)+'</div>').join('')
++'<div class="cform"><input id="c'+p.id+'" placeholder="Comente, mana..." maxlength="140"><button onclick="comentar('+p.id+')">➤</button></div>'
++'</div></div></div>').join('');
+}
+function esc(s){return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function stoke(id){const p=posts.find(x=>x.id===id);p.stoke++;save();render();}
+function comentar(id){const el=document.getElementById('c'+id);const t=el.value.trim();if(!t)return;const p=posts.find(x=>x.id===id);p.comments.push({n:'Mana',t});save();render();}
+let fotoData=null;
+function loadFoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,900/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);fotoData=c.toDataURL('image/jpeg',.75);const pv=document.getElementById('preview');pv.src=fotoData;pv.style.display='block';};img.src=ev.target.result;};r.readAsDataURL(f);}
+function openModal(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function postar(){
+const nome=document.getElementById('nome').value.trim();
+if(!fotoData){alert('Escolha uma foto! 📸');return;}
+if(!nome){alert('Conta pra gente quem é você! 💙');return;}
+posts.push({id:Date.now(),nome,pico:document.getElementById('pico').value.trim()||'Pico secreto',cap:document.getElementById('legenda').value.trim(),img:fotoData,stoke:0,comments:[],ts:Date.now()});
+save();closeModal();filtroAtual='Todos';render();window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+render();
+</script>
+</body>
+</html>
