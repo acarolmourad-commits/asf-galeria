@@ -14,6 +14,7 @@
   .form-card { max-width:520px; margin:0 auto 30px; background:rgba(255,255,255,.08); border-radius:16px; padding:20px; backdrop-filter:blur(8px); }
   .form-card input, .form-card textarea { width:100%; padding:12px; margin:8px 0; border:none; border-radius:10px; background:rgba(255,255,255,.15); color:#fff; font-size:1rem; }
   .form-card input::placeholder,.form-card textarea::placeholder { color:rgba(255,255,255,.6); }
+  .form-card small { opacity:.7; display:block; margin-top:4px; }
   .form-card button { width:100%; padding:14px; border:none; border-radius:10px; background:#ff6b6b; color:#fff; font-size:1.05rem; font-weight:700; cursor:pointer; margin-top:8px; }
   .form-card button:hover { background:#ff8787; }
   .grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; }
@@ -21,16 +22,13 @@
   .post img { width:100%; height:auto; max-height:520px; object-fit:contain; display:block; background:rgba(0,0,0,.35); }
   .post-body { padding:16px; }
   .post-body h3 { font-size:1.1rem; }
+  .badge-nivel { background:rgba(127,216,255,.2); color:#7fd8ff; border-radius:999px; padding:1px 8px; font-size:.65rem; font-weight:700; vertical-align:middle; }
   .post-body .pico { color:#7fd8ff; font-size:.9rem; margin:2px 0 8px; }
   .stoke { background:none; border:2px solid #ff6b6b; color:#ff6b6b; border-radius:20px; padding:6px 14px; cursor:pointer; font-weight:700; margin-top:10px; }
   .stoke:hover { background:#ff6b6b; color:#fff; }
-  .comments { margin-top:12px; border-top:1px solid rgba(255,255,255,.15); padding-top:10px; }
-  .comment { font-size:.85rem; padding:4px 0; opacity:.9; }
-  .comment b { color:#7fd8ff; }
-  .comment-form { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-  .comment-form input { padding:10px; border:none; border-radius:8px; background:rgba(255,255,255,.15); color:#fff; font-size:16px; } .comment-form input.cname { width:100%; } .comment-form input.ctext { flex:1; min-width:0; }
-  .comment-form button { padding:8px 12px; border:none; border-radius:8px; background:#0e4d64; color:#fff; cursor:pointer; }
+  .stoke:disabled { opacity:.5; cursor:default; }
   #status { text-align:center; margin:10px 0; min-height:20px; }
+  .link-mural { display:inline-block; margin-top:8px; color:#7fd8ff; }
 </style>
 </head>
 <body>
@@ -38,14 +36,14 @@
 <script src="https://acarolmourad-commits.github.io/asf-nav.js"></script>
 <header>
   <h1>🏄‍♀️ ASF Galeria</h1>
-  <p>Mural colaborativo — poste sua foto, compartilhe o stoke!</p>
+  <p>Mural das Manas — unificado com o app ASF · poste sua foto, compartilhe o stoke!</p>
 </header>
 
 <div class="form-card">
-  <input id="nome" placeholder="Seu nome" maxlength="60">
   <input id="pico" placeholder="Pico (ex: Praia do Rosa)" maxlength="80">
   <textarea id="cap" placeholder="Legenda..." rows="2" maxlength="300"></textarea>
-  <input id="foto" type="file" accept="image/*">
+  <input id="foto" type="file" accept="image/*" required>
+  <small>A foto é comprimida para WebP (máx. 1200px) no navegador antes do envio.</small>
   <button onclick="publicar()">Postar no mural 🤙</button>
   <div id="status"></div>
 </div>
@@ -55,80 +53,108 @@
 <script>
 const SUPABASE_URL = 'https://qktabrzbgdfndklytwub.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_qIvPxh6DavCPtntfflaRLw_QI_pZJih';
+const BUCKET = 'mural-fotos';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const statusEl = document.getElementById('status');
 
+/* Identidade: carteirinha local (numero) ou device-id anonimo (mesmo esquema do hub) */
+function identidade() {
+  let card = null;
+  try { card = JSON.parse(localStorage.getItem('asf-card-v2')); } catch (e) {}
+  let dev = localStorage.getItem('asf_device_id');
+  if (!dev) { dev = 'dev-' + Math.random().toString(36).slice(2, 12); localStorage.setItem('asf_device_id', dev); }
+  return {
+    user_id: card && card.numero ? card.numero : dev,
+    nome: card && card.nome ? card.nome : 'Mana',
+    nivel: card && card.nivel ? card.nivel : null
+  };
+}
+
+function esc(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* Compressão WebP pré-upload (Canvas, máx 1200px, q0.8) */
+function comprimirWebP(file) {
+  return new Promise((resolve, reject) => {
+    if (!file || !/^image\//.test(file.type)) return reject(new Error('Arquivo não é imagem'));
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const escala = Math.min(1, 1200 / img.width);
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * escala);
+      cv.height = Math.round(img.height * escala);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      cv.toBlob(b => b ? resolve(b) : reject(new Error('Falha ao converter WebP')), 'image/webp', 0.8);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Imagem inválida')); };
+    img.src = url;
+  });
+}
+
 async function carregar() {
-  const { data: posts, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
+  const [{ data: fotos, error }, { data: votos }] = await Promise.all([
+    sb.from('mural_fotos').select('*').order('criado_em', { ascending: false }),
+    sb.from('mural_votos').select('foto_id')
+  ]);
   if (error) { statusEl.textContent = 'Erro ao carregar: ' + error.message; return; }
-  const { data: comments } = await sb.from('comments').select('*').order('created_at');
+  const cont = {};
+  (votos || []).forEach(v => { cont[v.foto_id] = (cont[v.foto_id] || 0) + 1; });
   const mural = document.getElementById('mural');
   mural.innerHTML = '';
-  (posts || []).forEach(p => {
-    const cs = (comments || []).filter(c => c.post_id === p.id);
+  (fotos || []).forEach(f => {
     const div = document.createElement('div');
     div.className = 'post';
     div.innerHTML = `
-      ${p.img_url ? `<img src="${p.img_url}" alt="">` : ''}
+      <img src="${f.foto_url}" alt="" loading="lazy">
       <div class="post-body">
-        <h3>${esc(p.nome)}</h3>
-        <div class="pico">📍 ${esc(p.pico || '')}</div>
-        <p>${esc(p.cap || '')}</p>
-        <button class="stoke" onclick="stoke('${p.id}', ${p.stoke || 0})">🔥 Stoke (${p.stoke || 0})</button>
-        <div class="comments">
-          ${cs.map(c => `<div class="comment"><b>${esc(c.nome)}:</b> ${esc(c.texto)}</div>`).join('')}
-          <div class="comment-form">
-            <input class="cname" placeholder="Seu nome" id="cn-${p.id}" maxlength="60">
-            <input class="ctext" placeholder="Escreva um comentário..." id="ct-${p.id}" maxlength="200">
-            <button onclick="comentar('${p.id}')">➤</button>
-          </div>
-        </div>
+        <h3>${esc(f.autor_nome)}${f.autor_nivel ? ` <span class="badge-nivel">${esc(f.autor_nivel)}</span>` : ''}</h3>
+        <div class="pico">🏖️ ${esc(f.praia || '')}</div>
+        <p>${esc(f.legenda || '')}</p>
+        <button class="stoke" onclick="votar('${f.id}', this)">🤙 Apoiar (${cont[f.id] || 0})</button>
       </div>`;
     mural.appendChild(div);
   });
 }
 
-function esc(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
 async function publicar() {
-  const nome = document.getElementById('nome').value.trim();
+  const me = identidade();
   const pico = document.getElementById('pico').value.trim();
   const cap = document.getElementById('cap').value.trim();
   const file = document.getElementById('foto').files[0];
-  if (!nome) { statusEl.textContent = 'Coloca seu nome!'; return; }
-  statusEl.textContent = 'Publicando...';
-  let img_url = null;
-  if (file) {
-    const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g,'_')}`;
-    const { error: upErr } = await sb.storage.from('fotos').upload(path, file);
+  if (!file) { statusEl.textContent = 'Escolha uma foto 📸'; return; }
+  statusEl.textContent = 'Comprimindo e publicando...';
+  try {
+    const webp = await comprimirWebP(file);
+    const path = me.user_id.replace(/[^a-zA-Z0-9\-_]/g, '_') + '/' + Date.now() + '.webp';
+    const { error: upErr } = await sb.storage.from(BUCKET).upload(path, webp, { contentType: 'image/webp' });
     if (upErr) { statusEl.textContent = 'Erro no upload: ' + upErr.message; return; }
-    img_url = `${SUPABASE_URL}/storage/v1/object/public/fotos/${path}`;
-  }
-  const { error } = await sb.from('posts').insert({ nome, pico, cap, img_url });
-  if (error) { statusEl.textContent = 'Erro: ' + error.message; return; }
-  statusEl.textContent = 'Postado! 🤙';
-  document.getElementById('cap').value = ''; document.getElementById('foto').value = '';
+    const { error } = await sb.from('mural_fotos').insert({
+      user_id: me.user_id, autor_nome: me.nome, autor_nivel: me.nivel,
+      foto_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`,
+      legenda: cap, praia: pico, concurso_mes: null
+    });
+    if (error) { statusEl.textContent = 'Erro: ' + error.message; return; }
+    statusEl.textContent = 'Postado! 🤙';
+    document.getElementById('cap').value = ''; document.getElementById('foto').value = '';
+    carregar();
+  } catch (e) { statusEl.textContent = e.message; }
+}
+
+async function votar(fotoId, btn) {
+  const me = identidade();
+  btn.disabled = true;
+  const { error } = await sb.from('mural_votos').insert({ foto_id: fotoId, user_id: me.user_id });
+  if (error && error.code === '23505') { btn.textContent = 'Você já apoiou 🌊'; return; }
+  if (error) { btn.disabled = false; statusEl.textContent = 'Erro ao votar: ' + error.message; return; }
   carregar();
 }
 
-async function stoke(id, atual) {
-  await sb.from('posts').update({ stoke: atual + 1 }).eq('id', id);
-  carregar();
-}
-
-async function comentar(id) {
-  const nomeEl = document.getElementById('cn-' + id);
-  const textoEl = document.getElementById('ct-' + id);
-  if (!nomeEl || !textoEl) { alert('Erro interno: campo nao encontrado'); return; }
-  const nome = nomeEl.value.trim();
-  const texto = textoEl.value.trim();
-  if (!nome || !texto) { alert('Preencha nome e comentario!'); return; }
-  const { error } = await sb.from('comments').insert({ post_id: Number(id), nome, texto });
-  if (error) { alert('Erro ao comentar: ' + error.message); return; }
-  carregar();
-}
-
-sb.channel('mural').on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, carregar).subscribe();
+/* Tempo real unificado: novas fotos e votos atualizam a galeria */
+sb.channel('galeria-rt')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'mural_votos' }, carregar)
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mural_fotos' }, carregar)
+  .subscribe();
 carregar();
 </script>
 </body>
